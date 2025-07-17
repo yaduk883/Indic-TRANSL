@@ -46,20 +46,3 @@ if st.button("Translate"):
     elif src_lang == tgt_lang:
         st.info("Source and target languages are the same.")
         st.write(input_text)
-    else:
-        try:
-            src_code = nllb_lang_codes[src_lang]
-            tgt_code = nllb_lang_codes[tgt_lang]
-
-            tokenizer.src_lang = src_code
-            inputs = tokenizer(input_text, return_tensors="pt", padding=True)
-            inputs["forced_bos_token_id"] = tokenizer.lang_code_to_id[tgt_code]
-
-            with torch.no_grad():
-                outputs = model.generate(**inputs, max_length=512)
-                translated_text = tokenizer.batch_decode(outputs, skip_special_tokens=True)[0]
-
-            st.success("Translation:")
-            st.text_area("Translated Output", translated_text, height=150)
-        except Exception as e:
-            st.error(f"Error: {e}")
